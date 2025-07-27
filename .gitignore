@@ -1,0 +1,15 @@
+
+# Alt projeler için
+cart/node_modules/
+cart/.next/
+cart/build/
+
+
+cart-api/node_modules/
+cart-api/build/
+
+
+home/node_modules/
+home/.next/
+home/build/
+

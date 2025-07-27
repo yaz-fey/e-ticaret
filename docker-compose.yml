@@ -1,0 +1,46 @@
+services:
+  cart-api:
+    build: ./cart-api
+    container_name: cart-api
+    ports:
+      - "4002:4002"
+    restart: unless-stopped
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:4002/cart"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  home:
+    build: ./home
+    container_name: home-app
+    ports:
+      - "3000:3000"
+    depends_on:
+      cart-api:
+        condition: service_healthy
+    environment:
+      - NEXT_PUBLIC_CART_API_URL=http://cart-api:4002
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  cart:
+    build: ./cart
+    container_name: cart-app
+    ports:
+      - "3001:3001"
+    depends_on:
+      cart-api:
+        condition: service_healthy
+    environment:
+      - NEXT_PUBLIC_CART_API_URL=http://cart-api:4002
+    restart: unless-stopped
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge 
